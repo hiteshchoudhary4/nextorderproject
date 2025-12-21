@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - NextOrder</title>
+    <meta name="description"
+        content="Create your NextOrder vendor account to start managing your menu and taking orders.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <style>
+        /* Modal Styles */
+        .legal-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .legal-modal.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .legal-modal__content {
+            background: var(--color-surface-elevated);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .legal-modal__header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .legal-modal__header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .legal-modal__close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--color-surface);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .legal-modal__close:hover {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .legal-modal__body {
+            padding: 28px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .legal-modal__body h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--color-text-primary);
+        }
+
+        .legal-modal__body h3:first-child {
+            margin-top: 0;
+        }
+
+        .legal-modal__body p {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .legal-modal__body ul {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .legal-modal__body li {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 6px;
+            color: var(--color-text-secondary);
+        }
+
+        .legal-modal__footer {
+            padding: 20px 28px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .legal-link {
+            color: var(--color-accent);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .legal-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Theme Toggle (Floating) -->
+    <button class="theme-toggle" id="theme-toggle" style="position: fixed; top: 16px; right: 16px;"
+        aria-label="Toggle theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <svg class="moon-icon hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </button>
+
+    <div class="auth-page">
+        <div class="auth-container">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <h1>NextOrder</h1>
+                <p style="color: var(--color-text-secondary); margin-top: var(--spacing-sm);">
+                    Vendor Portal
+                </p>
+            </div>
+
+            <!-- Signup Card -->
+            <div class="auth-card">
+                <h2 class="auth-title">Create your account</h2>
+
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="name@example.com" required
+                            autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Create a password" required
+                            autocomplete="new-password" minlength="8">
+                        <p
+                            style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); margin-top: var(--spacing-xs);">
+                            Must be at least 8 characters
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirm-password">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="form-input"
+                            placeholder="Confirm your password" required autocomplete="new-password">
+                    </div>
+
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label
+                            style="display: flex; align-items: flex-start; gap: var(--spacing-sm); font-size: var(--font-size-sm); color: var(--color-text-secondary); cursor: pointer;">
+                            <input type="checkbox" id="terms" required
+                                style="width: 16px; height: 16px; margin-top: 2px;">
+                            <span>I agree to the <a href="#" class="legal-link"
+                                    onclick="openModal('terms'); return false;">Terms of Service</a> and <a href="#"
+                                    class="legal-link" onclick="openModal('privacy'); return false;">Privacy
+                                    Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary btn--large btn--full" id="signup-btn">
+                        Create account
+                    </button>
+                </form>
+
+                <!-- Error Message -->
+                <div id="error-message" class="hidden"
+                    style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(255, 59, 48, 0.1); border-radius: var(--radius-md); color: var(--color-error); font-size: var(--font-size-sm); text-align: center;">
+                    Error message here
+                </div>
+
+                <!-- Success Message -->
+                <div id="success-message" class="hidden"
+                    style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: rgba(52, 199, 89, 0.1); border-radius: var(--radius-md); color: var(--color-success); font-size: var(--font-size-sm); text-align: center;">
+                    Account created successfully! Redirecting...
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="legal-modal" id="terms-modal">
+        <div class="legal-modal__content">
+            <div class="legal-modal__header">
+                <h2>Terms of Service</h2>
+                <button class="legal-modal__close" onclick="closeModal('terms')">
+                    <ion-icon name="close-outline"></ion-icon>
+                </button>
+            </div>
+            <div class="legal-modal__body">
+                <h3>1. Acceptance of Terms</h3>
+                <p>Welcome to NextOrder. By accessing or using our restaurant management platform and services, you
+                    agree to be bound by these Terms of Service. If you disagree with any part of these terms, you may
+                    not access the Service.</p>
+                <p>These Terms apply to all visitors, users, vendors, and others who access or use the Service. By using
+                    NextOrder, you represent that you are at least 18 years old.</p>
+
+                <h3>2. Description of Service</h3>
+                <p>NextOrder is a comprehensive restaurant management platform that provides:</p>
+                <ul>
+                    <li><strong>Kitchen Management:</strong> Real-time order tracking and kitchen display systems</li>
+                    <li><strong>Order Processing:</strong> Digital order taking for dine-in and takeaway</li>
+                    <li><strong>Menu Management:</strong> Tools to create and manage your restaurant menu</li>
+                    <li><strong>Analytics:</strong> Business insights and performance tracking</li>
+                </ul>
+
+                <h3>3. User Accounts</h3>
+                <p>When you register, you agree to provide accurate information, maintain security of your login
+                    credentials, and accept responsibility for all activities under your account.</p>
+                <p>We reserve the right to suspend or terminate accounts for violation of these Terms, fraudulent
+                    activities, or non-payment of fees.</p>
+
+                <h3>4. Acceptable Use</h3>
+                <p>You agree NOT to use the Service to violate any laws, infringe intellectual property rights, transmit
+                    harmful code, or interfere with the Service.</p>
+
+                <h3>5. Intellectual Property</h3>
+                <p>The Service and its content are owned by NextOrder and are protected by copyright, trademark, and
+                    other intellectual property laws.</p>
+
+                <h3>6. Limitation of Liability</h3>
+                <p>NextOrder shall not be liable for any indirect, incidental, special, or consequential damages. Our
+                    total liability shall not exceed the amount you paid for the Service in the 12 months preceding the
+                    claim.</p>
+
+                <h3>7. Changes to Terms</h3>
+                <p>We reserve the right to modify these Terms at any time. Your continued use of the Service after
+                    changes constitutes acceptance of the modified Terms.</p>
+
+                <h3>8. Contact</h3>
+                <p>For questions about these Terms, contact us at legal@nextorder.com</p>
+            </div>
+            <div class="legal-modal__footer">
+                <button class="btn btn--secondary" onclick="closeModal('terms')">Close</button>
+                <button class="btn btn--primary" onclick="acceptTerms()">I Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="legal-modal" id="privacy-modal">
+        <div class="legal-modal__content">
+            <div class="legal-modal__header">
+                <h2>Privacy Policy</h2>
+                <button class="legal-modal__close" onclick="closeModal('privacy')">
+                    <ion-icon name="close-outline"></ion-icon>
+                </button>
+            </div>
+            <div class="legal-modal__body">
+                <h3>1. Introduction</h3>
+                <p>NextOrder is committed to protecting your privacy. This Privacy Policy explains how we collect, use,
+                    disclose, and safeguard your information when you use our platform.</p>
+
+                <h3>2. Information We Collect</h3>
+                <p><strong>Personal Information:</strong> Name, email address, phone number, password, business
+                    information.</p>
+                <p><strong>Business Data:</strong> Menu items, pricing, order history, customer information, kitchen
+                    queue data.</p>
+                <p><strong>Automatic Data:</strong> Device information, IP address, browser type, usage data, cookies.
+                </p>
+
+                <h3>3. How We Use Your Information</h3>
+                <ul>
+                    <li>Provide, operate, and maintain our Service</li>
+                    <li>Process orders and manage kitchen operations</li>
+                    <li>Create and manage your account</li>
+                    <li>Send account-related notifications</li>
+                    <li>Analyze usage to improve features</li>
+                    <li>Respond to support requests</li>
+                </ul>
+
+                <h3>4. Data Security</h3>
+                <p>We implement robust security measures including encryption in transit and at rest, role-based access
+                    controls, and regular security assessments.</p>
+
+                <h3>5. Your Rights</h3>
+                <p>You have the right to access, correct, or delete your personal data. You can opt out of marketing
+                    communications at any time.</p>
+
+                <h3>6. Cookies</h3>
+                <p>We use cookies for essential functionality, preferences, analytics, and session management. You can
+                    control cookies through your browser settings.</p>
+
+                <h3>7. Data Retention</h3>
+                <p>We retain your information for as long as necessary to provide the Service. When you delete your
+                    account, we will delete or anonymize your data within 90 days.</p>
+
+                <h3>8. Contact</h3>
+                <p>For privacy inquiries, contact us at privacy@nextorder.com</p>
+            </div>
+            <div class="legal-modal__footer">
+                <button class="btn btn--secondary" onclick="closeModal('privacy')">Close</button>
+                <button class="btn btn--primary" onclick="acceptTerms()">I Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+
+        // Check for saved theme preference or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        // Modal Functions
+        function openModal(type) {
+            const modal = document.getElementById(`${type}-modal`);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(type) {
+            const modal = document.getElementById(`${type}-modal`);
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function acceptTerms() {
+            document.getElementById('terms').checked = true;
+            closeModal('terms');
+            closeModal('privacy');
+        }
+
+        // Close modal on backdrop click
+        document.querySelectorAll('.legal-modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.legal-modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+
+</html>

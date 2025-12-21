@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Kitchen - NextOrder</title>
+    <meta name="description" content="Create your kitchen to get started with NextOrder.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="kitchen-select-page">
+
+    <!-- Animated Background -->
+    <div class="kitchen-bg">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="kitchen-header">
+        <div class="container kitchen-header__inner">
+            <a href="index.html" class="logo">NextOrder</a>
+            <div class="kitchen-header__user">
+                <span id="user-greeting">Welcome back!</span>
+                <button class="btn btn--ghost btn--small" onclick="logout()">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    Sign out
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="kitchen-main">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="kitchen-welcome">
+                <div class="welcome-badge">
+                    <ion-icon name="sparkles"></ion-icon>
+                    <span>Let's get cooking</span>
+                </div>
+                <h1 class="kitchen-title">
+                    Create Your Kitchen
+                </h1>
+                <p class="kitchen-subtitle">
+                    Set up your restaurant workspace and start managing orders
+                </p>
+            </div>
+
+            <!-- Single Card - Create Kitchen -->
+            <div class="kitchen-options" style="grid-template-columns: 1fr; max-width: 500px;">
+
+                <!-- Create Kitchen Card -->
+                <div class="kitchen-card kitchen-card--create" id="create-kitchen-card">
+                    <div class="kitchen-card__glow"></div>
+                    <div class="kitchen-card__content">
+                        <div class="kitchen-card__icon kitchen-card__icon--create">
+                            <ion-icon name="restaurant-outline"></ion-icon>
+                        </div>
+                        <h2 class="kitchen-card__title">Make Your Kitchen</h2>
+                        <p class="kitchen-card__desc">
+                            Start fresh and create your own restaurant workspace
+                        </p>
+
+                        <div class="create-features">
+                            <div class="create-feature">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Custom menu setup</span>
+                            </div>
+                            <div class="create-feature">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Invite team members</span>
+                            </div>
+                            <div class="create-feature">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Real-time order tracking</span>
+                            </div>
+                            <div class="create-feature">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Kitchen display system</span>
+                            </div>
+                            <div class="create-feature">
+                                <ion-icon name="checkmark-circle"></ion-icon>
+                                <span>Analytics & insights</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn--primary btn--large btn--full btn--glow" id="create-kitchen-btn"
+                            onclick="createKitchen()">
+                            <ion-icon name="rocket-outline"></ion-icon>
+                            Create New Kitchen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script>
+        // Protect page
+        if (!protectPage()) {
+            // Will redirect to login
+        }
+
+        // Display user greeting
+        const user = getCurrentUser();
+        if (user) {
+            document.getElementById('user-greeting').textContent = `Hey, ${user.name}!`;
+        }
+
+        // Check if user already has a kitchen
+        async function checkKitchen() {
+            try {
+                const response = await authFetch('/api/kitchens/my');
+                const data = await response.json();
+
+                if (response.ok && data.success && data.kitchen) {
+                    // User has a kitchen, redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                console.log('No existing kitchen found');
+            }
+        }
+
+        // Check on page load
+        checkKitchen();
+
+        // Prevent back button navigation if user already has a kitchen
+        // This works with checkKitchen to ensure proper flow
+        history.replaceState(null, '', window.location.href);
+        history.pushState(null, '', window.location.href);
+        window.addEventListener('popstate', function (event) {
+            // If user tries to go back, check if they have a kitchen
+            checkKitchen();
+            history.pushState(null, '', window.location.href);
+        });
+
+        function createKitchen() {
+            // Redirect to create kitchen page
+            window.location.href = 'create-kitchen.html';
+        }
+    </script>
+</body>
+
+</html>
