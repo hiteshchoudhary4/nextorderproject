@@ -18,6 +18,10 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    tools {
+        nodejs 'node20' // Links Jenkins tools to automatically add node and npm commands to shell path
+    }
+
     stages {
         // ========================================================
         // Stage 1: Checkout Source Code
