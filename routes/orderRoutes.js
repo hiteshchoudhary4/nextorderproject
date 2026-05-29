@@ -283,6 +283,7 @@ router.post('/', authMiddleware, async (req, res) => {
         });
 
         const newOrder = await order.save();
+        console.log(`[Order Service] ✅ New order created: #${newOrder.orderNumber} for ${newOrder.customer.name} (Amount: ₹${newOrder.totalAmount})`);
 
         // Emit socket event
         const io = req.app.get('socketio');

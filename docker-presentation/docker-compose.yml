@@ -1,0 +1,59 @@
+# ================================================
+# Docker Compose for NextOrder Application
+# ================================================
+# This file orchestrates multiple containers:
+# - NextOrder Node.js Application
+# - MongoDB Database
+# ================================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # NextOrder Application Service
+  # ============================================
+  nextorder-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextorder-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/nextorder
+      - JWT_SECRET=your-super-secret-jwt-key
+    depends_on:
+      - mongo
+    networks:
+      - nextorder-network
+
+  # ============================================
+  # MongoDB Database Service
+  # ============================================
+  mongo:
+    image: mongo:7.0
+    container_name: nextorder-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - nextorder-network
+
+# ============================================
+# Named Volumes for Data Persistence
+# ============================================
+volumes:
+  mongo-data:
+    driver: local
+
+# ============================================
+# Custom Network for Container Communication
+# ============================================
+networks:
+  nextorder-network:
+    driver: bridge
