@@ -86,11 +86,13 @@ pipeline {
                     echo 'Waiting 5 seconds for application to warm up...'
                     sleep time: 5, unit: 'SECONDS'
                     
-                    // Ping health endpoint to verify startup success
+                    // Ping health endpoint using container internal IP address
                     try {
-                        echo 'Querying /health endpoint...'
+                        echo 'Extracting test container IP address dynamically...'
+                        def testIp = sh(script: "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${TEST_CONTAINER}", returnStdout: true).trim()
+                        echo "Querying health status at http://${testIp}:3000/health ..."
                         // Use curl to check status. Expect 200 HTTP code.
-                        sh 'curl -f http://localhost:3000/health'
+                        sh "curl -f http://${testIp}:3000/health"
                         echo '✅ Integration testing SUCCESS: /health endpoint is operational!'
                     } catch (Exception e) {
                         error "❌ Health check failed. The container is unhealthy or did not start correctly."
